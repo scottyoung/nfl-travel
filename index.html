@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+path {
+  stroke: white;
+  stroke-width: 0.25px;
+  fill: grey;
+}
+#tooltip.hidden {
+display: none;
+}
+#tooltip p {
+margin: 0;
+font-family: sans-serif;
+font-size: 16px;
+line-height: 20px;
+}
+#tooltip {
+-moz-transition: all 0.15s;
+-o-transition: all 0.15s;
+-webkit-transition: all 0.15s;
+transition: all 0.15s;
+position: absolute;
+min-width: 60px;
+height: 62px;
+padding: 10px;
+background-color: white;
+-webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+-webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+-moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+pointer-events: none;
+} 
+svg {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+<body>
+  <div id="tooltip" class="hidden">
+<p><span id="city-label"></span></p>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://d3js.org/topojson.v0.min.js"></script>
+<script>
+var width = 960,
+    height = 600;
+
+var projection = d3.geo.albersUsa()
+    //.center([0, 5 ])
+    .scale(1200)
+    .translate([width / 2, height / 2]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var path = d3.geo.path()
+    .projection(projection);
+
+var g = svg.append("g");
+
+var color = d3.scale.category20();
+
+
+// Setup groups
+// --------------------------------------
+// Add groups for arcs and images. If arcs are added before images, they
+//  will appear under the images.
+// order is important
+var stateGroup = g.append('g');
+var arcGroup = g.append('g');
+var imageGroup = g.append('g');
+var pointGroup = g.append('g');
+
+
+
+// Team config
+var teams = {
+  Titans: {
+    "conference": "AFC",
+    "latitude": 36.166461,
+    "longitude": -86.771289    
+  },
+  Giants: {
+    "conference": "NFC",
+    "latitude": 40.812194,
+    "longitude": -74.076983
+  },
+  Steelers: {
+    "conference": "NFC",
+    "latitude": 40.446786,
+    "longitude": -80.015761
+  },
+  Panthers: {
+    "conference": "NFC",
+    "latitude": 35.225808,
+    "longitude": -80.852861
+  },
+  Ravens: {
+    "conference": "NFC",
+    "latitude": 39.277969,
+    "longitude": -76.622767
+  },
+  Buccaneers: {
+    "conference": "NFC",
+    "latitude": 27.975967,
+    "longitude": -82.50335
+  },
+  Colts: {
+    "conference": "NFC",
+    "latitude": 39.760056,
+    "longitude": -86.163806
+  },
+  Vikings: {
+    "conference": "NFC",
+    "latitude": 44.97388,
+    "longitude": -93.258094
+  },
+  Cardinals: {
+    "conference": "NFC",
+    "latitude": 33.5277,
+    "longitude": -112.262608
+  },
+  Cowboys: {
+    "conference": "NFC",
+    "latitude": 32.747778,
+    "longitude": -97.092778
+  },
+  Falcons: {
+    "conference": "NFC",
+    "latitude": 33.757614,
+    "longitude": -84.400972
+  },
+  Jets: {
+    "conference": "NFC",
+    "latitude": 40.812194,
+    "longitude": -74.076983
+  },
+  Broncos: {
+    "conference": "NFC",
+    "latitude": 39.743936,
+    "longitude": -105.020097
+  },
+  Dolphins: {
+    "conference": "NFC",
+    "latitude": 25.957919,
+    "longitude": -80.238842
+  },
+  Eagles: {
+    "conference": "NFC",
+    "latitude": 39.900775,
+    "longitude": -75.167453
+  },
+  Bears: {
+    "conference": "NFC",
+    "latitude": 41.862306,
+    "longitude": -87.616672
+  },
+  Patriots: {
+    "conference": "NFC",
+    "latitude": 42.090925,
+    "longitude": -71.26435
+  },
+  Redskins: {
+    "conference": "NFC",
+    "latitude": 38.907697,
+    "longitude": -76.864517
+  },
+  Packers: {
+    "conference": "NFC",
+    "latitude": 44.501306,
+    "longitude": -88.062167
+  },
+  Chargers: {
+    "conference": "NFC",
+    "latitude": 32.783117,
+    "longitude": -117.119525
+  },
+  Saints: {
+    "conference": "NFC",
+    "latitude": 29.950931,
+    "longitude": -90.081364
+  },
+  Texans: {
+    "conference": "NFC",
+    "latitude": 29.684781,
+    "longitude": -95.410956
+  },
+  Bills: {
+    "conference": "NFC",
+    "latitude": 42.773739,
+    "longitude": -78.786978
+  },
+  Niners: {
+    "conference": "NFC",
+    "latitude": 37.713486,
+    "longitude": -122.386256
+  },
+  Jaguars: {
+    "conference": "NFC",
+    "latitude": 30.32392,
+    "longitude": -81.637356
+  },
+  Browns: {
+    "conference": "NFC",
+    "latitude": 41.506022,
+    "longitude": -81.699564
+  },
+  Raiders: {
+    "conference": "NFC",
+    "latitude": 37.751411,
+    "longitude": -122.200889
+  },
+  Chiefs: {
+    "conference": "NFC",
+    "latitude": 39.048914,
+    "longitude": -94.484039
+  },
+  Rams: {
+    "conference": "NFC",
+    "latitude": 38.632975,
+    "longitude": -90.188547
+  },
+  Seahawks: {
+    "conference": "NFC",
+    "latitude": 47.595153,
+    "longitude": -122.331625
+  },
+  Bengals: {
+    "conference": "NFC",
+    "latitude": 39.095442,
+    "longitude": -84.516039
+  },
+  Lions: {
+    "conference": "NFC",
+    "latitude": 42.340156,
+    "longitude": -83.045808
+  }
+};
+
+// load and display the World
+/*
+d3.json("json/world-110m2.json", function(error, topology) {
+    g.selectAll("path")
+      .data(topojson.object(topology, topology.objects.countries)
+          .geometries)
+    .enter()
+      .append("path")
+      .attr("d", path)
+*/
+
+d3.json("json/us.json", function(error, topology) {
+ //svg.append("g")
+ //.attr("class", "county")
+ g.selectAll("path")
+ .data(topojson.object(topology, topology.objects.states).geometries)
+ .enter().append("path")
+ .attr("d", path)
+ .style ( "fill" , "rgb(0, 77, 40)");
+ 
+
+
+       d3.csv("data/stadiums.csv", function(error, data) {
+        g.selectAll("circle")
+           .data(data)
+           .enter()
+           .append("ellipse")
+           .attr("cx", function(d) {
+                   return projection([d.longitude, d.latitude])[0];
+           })
+           .attr("cy", function(d) {
+                   return projection([d.longitude, d.latitude])[1];
+           })
+           .attr("rx", 7.5)
+           .attr("ry", 4)
+           //.attr("r", 4.5)
+           //.style("fill", function(d,i){return color(i);})
+           .style("fill", "rgb(140, 86, 75)")
+           .on("mouseover", function(d) {   //Add tooltip on mouseover for each circle
+
+                //Get this circle's x/y values, then augment for the tooltip
+                var xPosition = d3.select(this).attr("cx");
+                var yPosition = d3.select(this).attr("cy");
+
+
+                //Update the tooltip position and value
+                d3.select("#tooltip")
+                //Show the tooltip above where the mouse triggers the event
+                  .style("left", (d3.event.pageX) + "px")     
+                          .style("top", (d3.event.pageY - 90) + "px")
+                  .select("#city-label")  
+                  .html("<strong>" + d.Conference + "</strong> " + d.Team);  
+               
+                //Show the tooltip
+                d3.select("#tooltip").classed("hidden", false);
+
+               })
+               .on("mouseout", function() {
+               
+                //Hide the tooltip
+                d3.select("#tooltip").classed("hidden", true);
+                
+               }) 
+
+                 // --- Helper functions (for tweening the path)
+                  var lineTransition = function lineTransition(path) {
+                      path.transition()
+                          //NOTE: Change this number (in ms) to make lines draw faster or slower
+                          .duration(5500)
+                          .attrTween("stroke-dasharray", tweenDash)
+                          
+                          .each("end", function(d,i) { 
+                              ////Uncomment following line to re-transition
+                              //d3.select(this).call(transition); 
+                              g.selectAll(".arc").append("svg:circle")
+                              .attr("r", "5")
+                              //We might want to do stuff when the line reaches the target,
+                              //  like start the pulsating or add a new point or tell the
+                              //  NSA to listen to this guy's phone calls
+                              //doStuffWhenLineFinishes(d,i);
+                          });
+                  };
+                  var tweenDash = function tweenDash() {
+                      //This function is used to animate the dash-array property, which is a
+                      //  nice hack that gives us animation along some arbitrary path (in this
+                      //  case, makes it look like a line is being drawn from point A to B)
+                      var len = this.getTotalLength(),
+                          interpolate = d3.interpolateString("0," + len, len + "," + len);
+
+                      return function(t) { return interpolate(t); };
+                  };
+
+                  links = [];
+                  for(var i=0, len=data.length; i<len; i++){
+                      // (note: loop until length - 1 since we're getting the next
+                      //  item with i+1)
+                      if (data[i].home != null && data[i].home != "") {
+                        links.push({
+                            type: "LineString",
+                            coordinates: [
+                                [ data[i].longitude, data[i].latitude ],
+                                [ teams[data[i].home].longitude, teams[data[i].home].latitude ]
+                            ]
+                        });
+                      }
+                  }
+                  // Standard enter / update 
+                  var pathArcs = g.selectAll(".arc")
+                      .data(links);
+
+                  //enter
+                  pathArcs.enter()
+                      .append("path").attr({
+                          'class': 'arc'
+                      }).style({ 
+                          fill: 'none',
+                      });
+
+                  //update
+                  pathArcs.attr({
+                          //d is the points attribute for this path, we'll draw
+                          //  an arc between the points using the arc function
+                          d: path
+                      })
+                      .style({
+                          stroke: '#000',
+                          'stroke-width': '3px'
+                      })
+                      
+                      // Uncomment this line to remove the transition
+                      .call(lineTransition)
+
+
+                  //exit
+                  pathArcs.exit().remove();
+
+
+         });
+
+          
+
+
+});
+
+// Use elliptical arc path segments to doubly-encode directionality.
+function tick() {
+  path.attr("d", linkArc);
+  circle.attr("transform", transform);
+  text.attr("transform", transform);
+}
+
+function linkArc(d) {
+  var dx = d.target.x - d.source.x,
+      dy = d.target.y - d.source.y,
+      dr = Math.sqrt(dx * dx + dy * dy);
+  return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+}
+
+var zoom = d3.behavior.zoom()
+    .on("zoom",function() {
+        g.attr("transform","translate("+ 
+            d3.event.translate.join(",")+")scale("+d3.event.scale+")");
+        g.selectAll("circle")
+            .attr("d", path.projection(projection));
+        g.selectAll("path")  
+            .attr("d", path.projection(projection)); 
+});
+
+svg.call(zoom)
+
+</script>
+</body>
+</html>
