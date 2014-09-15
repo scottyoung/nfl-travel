@@ -37,12 +37,124 @@ svg {
   display: block;
   margin: 0 auto;
 }
+
+a { cursor: pointer; color: blue; }
+a:hover,a.hover { text-decoration: underline; }
+
+.week-title {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+}
+
+.weekbtn {
+  -webkit-border-top-left-radius:0px;
+  -moz-border-radius-topleft:0px;
+  border-top-left-radius:0px;
+  -webkit-border-top-right-radius:20px;
+  -moz-border-radius-topright:20px;
+  border-top-right-radius:20px;
+  -webkit-border-bottom-right-radius:20px;
+  -moz-border-radius-bottomright:20px;
+  border-bottom-right-radius:20px;
+  -webkit-border-bottom-left-radius:0px;
+  -moz-border-radius-bottomleft:0px;
+  border-bottom-left-radius:0px;
+  text-indent:0px;
+  display:inline-block;
+  color:#ffffff;
+  font-family:Arial;
+  font-size:17px;
+  font-weight:bold;
+  font-style:normal;
+  height:36px;
+  line-height:36px;
+  width:85px;
+  text-decoration:none;
+  text-align:center;
+}
+
+.weekbtn:active {
+  position:relative;
+  top:1px;
+}
+
+.week2 {
+  -moz-box-shadow:inset 0px 1px 0px 0px #f5978e;
+  -webkit-box-shadow:inset 0px 1px 0px 0px #f5978e;
+  box-shadow:inset 0px 1px 0px 0px #f5978e;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f24537), color-stop(1, #c62d1f) );
+  background:-moz-linear-gradient( center top, #f24537 5%, #c62d1f 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f24537', endColorstr='#c62d1f');
+  background-color:#f24537;
+  border:2px solid #d02718;
+  text-shadow:1px 1px 0px #810e05;
+}
+.week2:hover {
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #c62d1f), color-stop(1, #f24537) );
+  background:-moz-linear-gradient( center top, #c62d1f 5%, #f24537 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#c62d1f', endColorstr='#f24537');
+  background-color:#c62d1f;
+}
+
+.week3 {
+  -moz-box-shadow:inset 0px 1px 0px 0px #c1ed9c;
+  -webkit-box-shadow:inset 0px 1px 0px 0px #c1ed9c;
+  box-shadow:inset 0px 1px 0px 0px #c1ed9c;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #9dce2c), color-stop(1, #8cb82b) );
+  background:-moz-linear-gradient( center top, #9dce2c 5%, #8cb82b 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#9dce2c', endColorstr='#8cb82b');
+  background-color:#9dce2c;
+  border:2px solid #83c41a;
+  text-shadow:1px 1px 0px #689324;
+}
+.week3:hover {
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #8cb82b), color-stop(1, #9dce2c) );
+  background:-moz-linear-gradient( center top, #8cb82b 5%, #9dce2c 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#8cb82b', endColorstr='#9dce2c');
+  background-color:#8cb82b;
+}
+
+.week4 {
+  -moz-box-shadow:inset 0px 1px 0px 0px #cae3fc;
+  -webkit-box-shadow:inset 0px 1px 0px 0px #cae3fc;
+  box-shadow:inset 0px 1px 0px 0px #cae3fc;
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #79bbff), color-stop(1, #4197ee) );
+  background:-moz-linear-gradient( center top, #79bbff 5%, #4197ee 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#79bbff', endColorstr='#4197ee');
+  background-color:#79bbff;
+  border:1px solid #469df5;
+  text-shadow:1px 1px 0px #287ace;
+}
+.week4:hover {
+  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #4197ee), color-stop(1, #79bbff) );
+  background:-moz-linear-gradient( center top, #4197ee 5%, #79bbff 100% );
+  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#4197ee', endColorstr='#79bbff');
+  background-color:#4197ee;
+}
+
+
+}</style>
+
+
+
+
 </style>
 <body>
+
+  <div class="week-title"><h1>Week 3</h1></div>
+
+  <div><a id="week2" class="weekbtn week2">Week 2</a></div>
+  <div><a id="week3" class="weekbtn week3">Week 3</a></div>
+  <div><a id="week4" class="weekbtn week4">Week 4</a></div>
+
+
   <div id="tooltip" class="hidden">
 <p><span id="city-label"></span></p>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="http://d3js.org/topojson.v0.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script>
 var width = 960,
     height = 600;
@@ -63,6 +175,7 @@ var g = svg.append("g");
 
 var color = d3.scale.category20();
 
+var currentWeek = "week3";
 
 // Setup groups
 // --------------------------------------
@@ -251,6 +364,17 @@ d3.json("json/world-110m2.json", function(error, topology) {
       .attr("d", path)
 */
 
+/* TODO
+    - Dynamic stats
+    http://killersports.com/nfl/query?output=default&sdql=date%2Cpoints%2Cwins%2C+ats+margin%40team%3DBears+and+season%3D2014&submit=++S+D+Q+L+%21++
+    http://api.sportsdatabase.com/nfl/query.json?sdql=date,points,wins,%20ats%20margin@team=Bears%20and%20season=2014&output=json&api_key=guest
+
+    - Show divions
+    http://i.imgur.com/r2JmX7O.png
+
+
+*/
+
 d3.json("json/us.json", function(error, topology) {
  //svg.append("g")
  //.attr("class", "county")
@@ -261,8 +385,17 @@ d3.json("json/us.json", function(error, topology) {
  .style ( "fill" , "rgb(0, 77, 40)");
  
 
+  loadWeek("data/stadiums-"+currentWeek+".csv");
 
-       d3.csv("data/stadiums.csv", function(error, data) {
+       
+
+          
+
+
+});
+
+function loadWeek(url) {
+  d3.csv(url, function(error, data) {
         g.selectAll("circle")
            .data(data)
            .enter()
@@ -273,16 +406,27 @@ d3.json("json/us.json", function(error, topology) {
            .attr("cy", function(d) {
                    return projection([d.longitude, d.latitude])[1];
            })
-           .attr("rx", 7.5)
-           .attr("ry", 4)
+           .attr("rx", 10)
+           .attr("ry", 5.5)
            //.attr("r", 4.5)
-           //.style("fill", function(d,i){return color(i);})
-           .style("fill", "rgb(140, 86, 75)")
+           .style("fill", function(d,i){
+              d3.select("grad").remove();
+            var teamGradient = svg.append("defs").append("linearGradient").attr("id", d.Team)
+                .attr("x1", "0%").attr("x2", "0%").attr("y1", "100%").attr("y2", "0%");
+                teamGradient.append("stop").attr("offset", "50%").style("stop-color", d.teamColor1?d.teamColor1:"#FFF");
+                teamGradient.append("stop").attr("offset", "50%").style("stop-color", d.teamColor2?d.teamColor2:"#000000")
+            return "url(#"+d.Team+")";
+          })
+           //.style("fill", "url(#grad)")
            .on("mouseover", function(d) {   //Add tooltip on mouseover for each circle
 
                 //Get this circle's x/y values, then augment for the tooltip
                 var xPosition = d3.select(this).attr("cx");
                 var yPosition = d3.select(this).attr("cy");
+
+                html = d.Team + " (" + teams[d.Team].wins + "-" + teams[d.Team].losses + ")";
+                
+
 
 
                 //Update the tooltip position and value
@@ -291,7 +435,7 @@ d3.json("json/us.json", function(error, topology) {
                   .style("left", (d3.event.pageX) + "px")     
                           .style("top", (d3.event.pageY - 90) + "px")
                   .select("#city-label")  
-                  .html("<strong>" + d.Conference + "</strong> " + d.Team);  
+                  .html("<strong>" + html + "</strong> ");  
                
                 //Show the tooltip
                 d3.select("#tooltip").classed("hidden", false);
@@ -314,8 +458,11 @@ d3.json("json/us.json", function(error, topology) {
                           .each("end", function(d,i) { 
                               ////Uncomment following line to re-transition
                               //d3.select(this).call(transition); 
-                              g.selectAll(".arc").append("svg:circle")
-                              .attr("r", "5")
+                              //g.selectAll(".arc").append("circle")
+                              //.attr("cx", "0")
+                              //.attr("cy", "0")
+                              //.attr("r", "50")
+                              //.style("fill", "purple");
                               //We might want to do stuff when the line reaches the target,
                               //  like start the pulsating or add a new point or tell the
                               //  NSA to listen to this guy's phone calls
@@ -366,7 +513,7 @@ d3.json("json/us.json", function(error, topology) {
                       })
                       .style({
                           stroke: '#000',
-                          'stroke-width': '3px'
+                          'stroke-width': '2px'
                       })
                       
                       // Uncomment this line to remove the transition
@@ -379,10 +526,7 @@ d3.json("json/us.json", function(error, topology) {
 
          });
 
-          
-
-
-});
+}
 
 // Use elliptical arc path segments to doubly-encode directionality.
 function tick() {
@@ -410,6 +554,48 @@ var zoom = d3.behavior.zoom()
 
 svg.call(zoom)
 
+$(document).ready(function(){
+  $("#week2").click(function() {
+      loadWeek("data/stadiums-week2.csv");
+      $(".week-title").html("<h1>Week 2</h1>");
+  });
+  $("#week3").click(function() {
+      loadWeek("data/stadiums-week3.csv");
+      $(".week-title").html("<h1>Week 3</h1>");
+  });
+  $("#week4").click(function() {
+      loadWeek("data/stadiums-week4.csv");
+      $(".week-title").html("<h1>Week 4</h1>");
+  });
+
+  var data = {
+      'api_key': 'p11nF2a3dAk254au', 
+      'host': 'sportsdatabase.com', 
+      'client': 'guest', 
+      'output': 'json', 
+      'sport': 'nfl', 
+      'sdql': 'team,wins,losses@season=2014 and week=16'
+  };
+
+                    
+         
+
+        $.getJSON('http://api.sportsdatabase.com/nfl/query.json?jsoncallback=?', data, function(result) {
+          var teamList = result.groups[0].columns[0];
+          $.each(teamList, function(i, entry) {
+              if (entry == "Fortyniners") {
+                entry = "Niners";
+              }
+              teams[entry].wins = result.groups[0].columns[1][i];
+              teams[entry].losses = result.groups[0].columns[2][i];
+          });
+
+        });
+
+
+});
+
 </script>
 </body>
 </html>
+
