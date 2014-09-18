@@ -38,6 +38,10 @@ svg {
   margin: 0 auto;
 }
 
+#week-container {
+  float: left;
+}
+
 a { cursor: pointer; color: blue; }
 a:hover,a.hover { text-decoration: underline; }
 
@@ -145,10 +149,9 @@ a:hover,a.hover { text-decoration: underline; }
 
   <div class="week-title"><h1>Week 3</h1></div>
 
-  <div><a id="week2" class="weekbtn week2">Week 2</a></div>
-  <div><a id="week3" class="weekbtn week3">Week 3</a></div>
-  <div><a id="week4" class="weekbtn week4">Week 4</a></div>
 
+  <div id="week-container">
+  </div>
 
   <div id="tooltip" class="hidden">
 <p><span id="city-label"></span></p>
@@ -397,9 +400,7 @@ d3.json("json/world-110m2.json", function(error, topology) {
 */
 
 /* TODO
-    - Dynamic stats
-    http://killersports.com/nfl/query?output=default&sdql=date%2Cpoints%2Cwins%2C+ats+margin%40team%3DBears+and+season%3D2014&submit=++S+D+Q+L+%21++
-    http://api.sportsdatabase.com/nfl/query.json?sdql=date,points,wins,%20ats%20margin@team=Bears%20and%20season=2014&output=json&api_key=guest
+   
 
     - Show divions
     http://i.imgur.com/r2JmX7O.png
@@ -588,6 +589,7 @@ var zoom = d3.behavior.zoom()
 svg.call(zoom)
 
 $(document).ready(function(){
+  /*
   $("#week2").on('click mouseover', function() {
       currentWeek = "week2";
       loadWeek("data/stadiums-week2.csv");
@@ -601,9 +603,20 @@ $(document).ready(function(){
   });
   $("#week4").on('click mouseover', function() {
       currentWeek = "week4";
-      loadWeek("data/stadiums-week4.csv");
-      $(".week-title").html("<h1>Week 4</h1>");
+      loadWeek("data/stadiums-week3.csv");
+      $(".week-title").html("<h1>Week 455</h1>");
   });
+*/
+  $("body").on('mouseover','.weekbtn', function() {
+    currentWeek = $(this).attr('id');
+    loadWeek("data/stadiums-week3.csv");
+    $(".week-title").html("<h1>Week " + $(this).attr('id').split('week').pop() + "</h1>" );
+  });
+
+  for (var i = 0; i < 16; i++) {
+
+    $("#week-container").append('<div><a id="week'+(i+1)+'" class="weekbtn week'+(i+1)+'" style="background-color: #'+(Math.random().toString(16) + '000000').slice(2, 8)+'"; ">Week '+(i+1)+'</a></div>')
+  }
 
   var data = {
       'api_key': 'p11nF2a3dAk254au', 
